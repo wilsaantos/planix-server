@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
+import { UserController } from './user.controller.js';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -9,7 +9,7 @@ describe('UserController', () => {
       controllers: [UserController],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    controller = module.get(UserController);
   });
 
   it('should be defined', () => {

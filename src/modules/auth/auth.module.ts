@@ -8,12 +8,8 @@ import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { AuthController } from './auth.controller.js';
 
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.register({}),
-    UserModule,
-  ],
+  imports: [PassportModule, JwtModule.register({}), UserModule],
   providers: [AuthService, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}
