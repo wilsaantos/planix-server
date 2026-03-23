@@ -25,6 +25,12 @@ enum TaskStatus {
   DONE
 }
 
+enum TaskPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
 model Task {
   id          String  @id @default(uuid())
   title       String
@@ -33,10 +39,10 @@ model Task {
   status TaskStatus @default(TODO)
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   dueDate  DateTime?
-  priority Int? // (1 = high, 2 = mid, 3 = low)
+  priority TaskPriority?
 
   isArchived Boolean   @default(false)
   archivedAt DateTime?
@@ -47,13 +53,19 @@ model Task {
   updatedAt DateTime @updatedAt
 
   histories TaskHistory[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([isArchived])
 }
 
 model TaskHistory {
   id String @id @default(uuid())
 
   taskId String
-  task   Task   @relation(fields: [taskId], references: [id])
+  task   Task @relation(fields: [taskId], references: [id])
+
+  userId String
 
   from TaskStatus
   to   TaskStatus
