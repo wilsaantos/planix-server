@@ -34,12 +34,12 @@ export class AuthService {
         const payload = { sub: userId, email };
 
         const accessToken = this.jwtService.sign(payload, {
-            secret: 'access_secret',
+            secret: 'process.env.ACCESS_SECRET!',
             expiresIn: '15m',
         });
 
         const refreshToken = this.jwtService.sign(payload, {
-            secret: 'refresh_secret',
+            secret: 'process.env.REFRESH_SECRET!',
             expiresIn: '7d',
         });
 
