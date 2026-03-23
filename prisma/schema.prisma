@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -7,11 +8,11 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   refreshToken String?
 
   tasks Task[]
@@ -25,37 +26,37 @@ enum TaskStatus {
 }
 
 model Task {
-  id          String     @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
 
-  status      TaskStatus @default(TODO)
+  status TaskStatus @default(TODO)
 
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  dueDate     DateTime?
-  priority    Int? // (1 = high, 2 = mid, 3 = low)
+  dueDate  DateTime?
+  priority Int? // (1 = high, 2 = mid, 3 = low)
 
-  isArchived  Boolean    @default(false)
-  archivedAt  DateTime?
+  isArchived Boolean   @default(false)
+  archivedAt DateTime?
 
-  deletedAt   DateTime?
+  deletedAt DateTime?
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  histories   TaskHistory[]
+  histories TaskHistory[]
 }
 
 model TaskHistory {
-  id        String     @id @default(uuid())
+  id String @id @default(uuid())
 
-  taskId    String
-  task      Task       @relation(fields: [taskId], references: [id])
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
 
-  from      TaskStatus
-  to        TaskStatus
+  from TaskStatus
+  to   TaskStatus
 
-  changedAt DateTime   @default(now())
+  changedAt DateTime @default(now())
 }
