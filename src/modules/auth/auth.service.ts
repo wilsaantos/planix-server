@@ -79,4 +79,14 @@ export class AuthService {
       async logout(userId: string) {
         await this.userService.updateRefreshToken(userId, null);
       }
+
+      async googleLogin(user: any) {
+        let existingUser = await this.userService.findByEmail(user.email);
+      
+        if (!existingUser) {
+          existingUser = await this.userService.create(user.email, '');
+        }
+      
+        return this.generateTokens(existingUser.id, existingUser.email);
+      }
 }
