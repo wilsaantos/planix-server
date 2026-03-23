@@ -43,8 +43,40 @@ export class AuthService {
             expiresIn: '7d',
         });
 
-        await this.userService.updateRefreshToken(userId, refreshToken);
+        const hash = await bcrypt.hash(refreshToken, 10);
+        await this.userService.updateRefreshToken(userId, hash);
 
         return { accessToken, refreshToken };
     }
+
+    async refresh(refreshToken: string) {
+        try {
+          const payload = this.jwtService.verify(refreshToken, {
+            secret: 'refresh_secret',
+          });
+      
+          const user = await this.userService.findByEmail(payload.email);
+      
+          if (!user || !user.refreshToken) {
+            throw new UnauthorizedException();
+          }
+      
+          const isMatch = await bcrypt.compare(
+            refreshToken,
+            user.refreshToken,
+          );
+      
+          if (!isMatch) {
+            throw new UnauthorizedException();
+          }
+      
+          return this.generateTokens(user.id, user.email);
+        } catch {
+          throw new UnauthorizedException();
+        }
+      }
+
+      async logout(userId: string) {
+        await this.userService.updateRefreshToken(userId, null);
+      }
 }
