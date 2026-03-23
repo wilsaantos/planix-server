@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks Task[]
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  DONE
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+
+  status      TaskStatus @default(TODO)
+
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+
+  dueDate     DateTime?
+  priority    Int? // (1 = high, 2 = mid, 3 = low)
+
+  isArchived  Boolean    @default(false)
+  archivedAt  DateTime?
+
+  deletedAt   DateTime?
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  histories   TaskHistory[]
+}
+
+model TaskHistory {
+  id        String     @id @default(uuid())
+
+  taskId    String
+  task      Task       @relation(fields: [taskId], references: [id])
+
+  from      TaskStatus
+  to        TaskStatus
+
+  changedAt DateTime   @default(now())
+}
