@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from './profile.service.js';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard.js';
 
 @Controller('profile')
 export class ProfileController {

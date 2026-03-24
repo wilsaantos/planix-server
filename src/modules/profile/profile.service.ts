@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from 'src/infra/prisma/prisma.service.js';
-import { S3Service } from 'src/infra/s3/s3.service.js';
+import { PrismaService } from '../../infra/prisma/prisma.service.js';
+import { S3Service } from '../../infra/s3/s3.service.js';
 
 @Injectable()
 export class ProfileService {
