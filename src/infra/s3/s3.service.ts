@@ -3,7 +3,9 @@ import {
     S3Client,
     PutObjectCommand,
     DeleteObjectCommand,
+    GetObjectCommand,
 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class S3Service {
@@ -46,6 +48,7 @@ export class S3Service {
                 Key: key,
                 Body: file.buffer,
                 ContentType: file.mimetype,
+                ACL: 'public-read',
             }),
         );
 
@@ -63,6 +66,16 @@ export class S3Service {
                 Key: key,
             }),
         );
+    }
+
+    async getPresignedUrl(fileUrl: string): Promise<string> {
+        if (!fileUrl) return '';
+        const key = this.extractKeyFromUrl(fileUrl);
+        const command = new GetObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: key,
+        });
+        return getSignedUrl(this.s3, command, { expiresIn: 3600 });
     }
 
     // 🔥 Gerar URL pública
