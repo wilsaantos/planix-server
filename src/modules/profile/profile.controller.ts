@@ -15,6 +15,6 @@ export class ProfileController {
         @UploadedFile() file: Express.Multer.File,
         @Req() req,
     ) {
-        return this.profileService.uploadProfileImage(req.user.id, file);
+        return this.profileService.uploadProfileImage(req.user.userId, file);
     }
 }

@@ -23,12 +23,12 @@ import {
   
     @Post()
     create(@Req() req, @Body() dto: CreateTaskDto) {
-      return this.taskService.create(req.user.sub, dto);
+      return this.taskService.create(req.user.userId, dto);
     }
   
     @Get()
     findAll(@Req() req, @Query() query: QueryTaskDto) {
-      return this.taskService.findAll(req.user.sub, query);
+      return this.taskService.findAll(req.user.userId, query);
     }
   
     @Patch(':id')
@@ -37,16 +37,16 @@ import {
       @Req() req,
       @Body() dto: UpdateTaskDto,
     ) {
-      return this.taskService.update(id, req.user.sub, dto);
+      return this.taskService.update(id, req.user.userId, dto);
     }
   
     @Patch(':id/archive')
     archive(@Param('id') id: string, @Req() req) {
-      return this.taskService.archive(id, req.user.sub);
+      return this.taskService.archive(id, req.user.userId);
     }
   
     @Delete(':id')
     remove(@Param('id') id: string, @Req() req) {
-      return this.taskService.remove(id, req.user.sub);
+      return this.taskService.remove(id, req.user.userId);
     }
   }
