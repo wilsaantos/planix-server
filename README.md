@@ -1,98 +1,167 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Planix API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para gerenciamento de tarefas construida com NestJS, Prisma, PostgreSQL e AWS S3.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+REST API for task management built with NestJS, Prisma, PostgreSQL and AWS S3.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Producao / Production
 
-## Project setup
+A aplicacao esta rodando em uma instancia EC2 com NGINX como reverse proxy e HTTPS habilitado via Let's Encrypt.
 
-```bash
-$ npm install
+The application is running on an EC2 instance with NGINX as a reverse proxy and HTTPS enabled via Let's Encrypt.
+
+**Base URL:** https://planix-api.purpleco.online
+
+---
+
+## Tecnologias / Tech Stack
+
+- Node.js 24
+- NestJS 11
+- Prisma 7 (PostgreSQL)
+- Passport (JWT + Google OAuth)
+- AWS S3 (upload de imagens)
+- Docker + Docker Compose
+
+---
+
+## Rotas da API / API Routes
+
+### Auth
+
+| Metodo | Rota | Descricao / Description | Auth |
+|--------|------|------------------------|------|
+| POST | /auth/register | Registrar usuario / Register user | Nao / No |
+| POST | /auth/login | Login com email e senha / Login with email and password | Nao / No |
+| POST | /auth/refresh | Renovar tokens / Refresh tokens | Nao / No |
+| POST | /auth/logout | Logout (invalida refresh token) / Logout (invalidates refresh token) | Sim / Yes |
+| GET | /auth/google | Iniciar login com Google / Start Google login | Nao / No |
+| GET | /auth/google/callback | Callback do Google OAuth / Google OAuth callback | Nao / No |
+
+### Tasks
+
+| Metodo | Rota | Descricao / Description | Auth |
+|--------|------|------------------------|------|
+| POST | /tasks | Criar tarefa / Create task | Sim / Yes |
+| GET | /tasks | Listar tarefas / List tasks | Sim / Yes |
+| PATCH | /tasks/:id | Atualizar tarefa / Update task | Sim / Yes |
+| PATCH | /tasks/:id/archive | Arquivar tarefa / Archive task | Sim / Yes |
+| DELETE | /tasks/:id | Remover tarefa (soft delete) / Remove task (soft delete) | Sim / Yes |
+
+### User
+
+| Metodo | Rota | Descricao / Description | Auth |
+|--------|------|------------------------|------|
+| GET | /user/me | Dados do usuario autenticado / Authenticated user data | Sim / Yes |
+
+### Profile
+
+| Metodo | Rota | Descricao / Description | Auth |
+|--------|------|------------------------|------|
+| POST | /profile/profile-image | Upload de foto de perfil / Upload profile image | Sim / Yes |
+
+---
+
+## Variaveis de ambiente / Environment Variables
+
+Copie o arquivo `.env.example` para `.env` e preencha os valores.
+
+Copy `.env.example` to `.env` and fill in the values.
+
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/planix"
+ACCESS_SECRET="your_access_secret"
+REFRESH_SECRET="your_refresh_secret"
+GOOGLE_AUTH_CLIENT_ID="your_google_client_id"
+GOOGLE_AUTH_SECRET_KEY="your_google_secret_key"
+HOST_URL="http://localhost:3000"
+AWS_ACCESS_KEY_ID="your_aws_access_key_id"
+AWS_SECRET_ACCESS_KEY="your_aws_secret_access_key"
+AWS_REGION="us-east-1"
+AWS_S3_BUCKET="your_s3_bucket_name"
 ```
 
-## Compile and run the project
+---
+
+## Rodando com Docker / Running with Docker
+
+### Pre-requisitos / Prerequisites
+
+- Docker
+- Docker Compose
+
+### Subir o projeto / Start the project
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up --build
 ```
 
-## Run tests
+Isso vai:
+1. Criar um container PostgreSQL na porta 5432
+2. Buildar a API
+3. Rodar as migrations do Prisma automaticamente
+4. Iniciar a API na porta 3000
+
+This will:
+1. Create a PostgreSQL container on port 5432
+2. Build the API
+3. Run Prisma migrations automatically
+4. Start the API on port 3000
+
+### Parar o projeto / Stop the project
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose down
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Resetar o banco de dados / Reset the database
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose down -v
+docker compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+O flag `-v` remove o volume do PostgreSQL, apagando todos os dados.
 
-## Resources
+The `-v` flag removes the PostgreSQL volume, deleting all data.
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Rodando localmente (sem Docker) / Running locally (without Docker)
 
-## Support
+```bash
+npm install
+npx prisma migrate dev
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## Testes / Tests
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# testes unitarios / unit tests
+npm test
 
-## License
+# testes e2e
+npm run test:e2e
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## Estrutura do projeto / Project Structure
+
+```
+src/
+  common/          -- Guards e utilitarios compartilhados / Shared guards and utilities
+  infra/
+    prisma/        -- Prisma client e service / Prisma client and service
+    s3/            -- Servico de upload S3 / S3 upload service
+  modules/
+    auth/          -- Registro, login, JWT, Google OAuth
+    profile/       -- Upload de foto de perfil / Profile image upload
+    task/          -- CRUD de tarefas com historico / Task CRUD with history
+    user/          -- Dados do usuario / User data
+```

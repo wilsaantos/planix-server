@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service.js';
 import { PrismaService } from '../../infra/prisma/prisma.service.js';
+import { S3Service } from '../../infra/s3/s3.service';
 
 describe('UserService', () => {
   let service: UserService;
@@ -10,6 +11,7 @@ describe('UserService', () => {
       providers: [
         UserService,
         { provide: PrismaService, useValue: {} },
+        { provide: S3Service, useValue: {} },
       ],
     }).compile();
 
